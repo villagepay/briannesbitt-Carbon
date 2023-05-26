@@ -137,48 +137,6 @@ trait Serialization
     }
 
     /**
-     * Returns the values to dump on serialize() called on.
-     *
-     * Only used by PHP >= 7.4.
-     *
-     * @return array
-     */
-    public function __serialize(): array
-    {
-        // @codeCoverageIgnoreStart
-        if (isset($this->timezone_type)) {
-            return [
-                'date' => $this->date ?? null,
-                'timezone_type' => $this->timezone_type,
-                'timezone' => $this->timezone ?? null,
-            ];
-        }
-        // @codeCoverageIgnoreEnd
-
-        $timezone = $this->getTimezone();
-        $export = [
-            'date' => $this->format('Y-m-d H:i:s.u'),
-            'timezone_type' => $timezone->getType(),
-            'timezone' => $timezone->getName(),
-        ];
-
-        // @codeCoverageIgnoreStart
-        if (\extension_loaded('msgpack') && isset($this->constructedObjectId)) {
-            $export['dumpDateProperties'] = [
-                'date' => $this->format('Y-m-d H:i:s.u'),
-                'timezone' => serialize($this->timezone ?? null),
-            ];
-        }
-        // @codeCoverageIgnoreEnd
-
-        if ($this->localTranslator ?? null) {
-            $export['dumpLocale'] = $this->locale ?? null;
-        }
-
-        return $export;
-    }
-
-    /**
      * Set locale if specified on unserialize() called.
      *
      * Only used by PHP < 7.4.
@@ -212,38 +170,6 @@ trait Serialization
         }
 
         $this->cleanupDumpProperties();
-    }
-
-    /**
-     * Set locale if specified on unserialize() called.
-     *
-     * Only used by PHP >= 7.4.
-     *
-     * @return void
-     */
-    public function __unserialize(array $data): void
-    {
-        // @codeCoverageIgnoreStart
-        try {
-            $this->__construct($data['date'] ?? null, $data['timezone'] ?? null);
-        } catch (Throwable $exception) {
-            if (!isset($data['dumpDateProperties']['date'], $data['dumpDateProperties']['timezone'])) {
-                throw $exception;
-            }
-
-            try {
-                // FatalError occurs when calling msgpack_unpack() in PHP 7.4 or later.
-                ['date' => $date, 'timezone' => $timezone] = $data['dumpDateProperties'];
-                $this->__construct($date, unserialize($timezone));
-            } catch (Throwable $ignoredException) {
-                throw $exception;
-            }
-        }
-        // @codeCoverageIgnoreEnd
-
-        if (isset($data['dumpLocale'])) {
-            $this->locale($data['dumpLocale']);
-        }
     }
 
     /**
