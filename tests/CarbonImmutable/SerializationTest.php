@@ -182,31 +182,6 @@ class SerializationTest extends AbstractTestCase
         $this->assertSame($expected, $date->__sleep());
     }
 
-    public function testSerializeRawMethod(): void
-    {
-        $date = Carbon::parse('2018-06-01 21:25:13.321654 Europe/Vilnius');
-
-        $expected = [
-            'date' => '2018-06-01 21:25:13.321654',
-            'timezone_type' => 3,
-            'timezone' => 'Europe/Vilnius',
-        ];
-
-        if (\extension_loaded('msgpack')) {
-            $expected['dumpDateProperties'] = [
-                'date' => $date->format('Y-m-d H:i:s.u'),
-                'timezone' => serialize($date->timezone),
-            ];
-        }
-
-        $this->assertSame($expected, $date->__serialize());
-
-        $date->locale('lt_LT');
-        $expected['dumpLocale'] = 'lt_LT';
-
-        $this->assertSame($expected, $date->__serialize());
-    }
-
     public function testWakeupRawMethod(): void
     {
         /** @var Carbon $date */

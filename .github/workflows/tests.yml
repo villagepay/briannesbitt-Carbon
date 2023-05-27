@@ -33,66 +33,66 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: 7.1.8
-          - php: 7.1.28
-          - php: 7.1
-          - php: 7.1
+          - php: '7.1.8'
+          - php: '7.1.28'
+          - php: '7.1'
+          - php: '7.1'
             setup: lowest
 
-          - php: 7.2.0
-          - php: 7.2.15
-          - php: 7.2
-          - php: 7.2
+          - php: '7.2.0'
+          - php: '7.2.15'
+          - php: '7.2'
+          - php: '7.2'
             setup: lowest
 
-          - php: 7.3.0
-          - php: 7.3.5
-          - php: 7.3
-          - php: 7.3
+          - php: '7.3.0'
+          - php: '7.3.5'
+          - php: '7.3'
+          - php: '7.3'
             setup: lowest
 
-          - php: 7.4
-          - php: 7.4
+          - php: '7.4'
+          - php: '7.4'
             setup: lowest
 
-          - php: 8.0
+          - php: '8.0'
             classmap-authoritative: true
 
-          - php: 8.0
-          - php: 8.0
+          - php: '8.0'
+          - php: '8.0'
             setup: lowest
 
-          - php: 8.1
-          - php: 8.1
+          - php: '8.1'
+          - php: '8.1'
             setup: lowest
 
-          - php: 8.2
-          - php: 8.2
+          - php: '8.2'
+          - php: '8.2'
             setup: lowest
 
-          - php: 8.3
-          - php: 8.3
+          - php: '8.3'
+          - php: '8.3'
             setup: lowest
 
-          - php: 8.0
+          - php: '8.0'
             laravel: true
             reference: 9.x
 
-          - php: 8.0
-            laravel: true
-            reference: 9.x
-            classmap-authoritative: true
-
-          - php: 8.2
-            laravel: true
-            reference: 9.x
-
-          - php: 8.2
+          - php: '8.0'
             laravel: true
             reference: 9.x
             classmap-authoritative: true
 
-          - php: 8.2
+          - php: '8.2'
+            laravel: true
+            reference: 9.x
+
+          - php: '8.2'
+            laravel: true
+            reference: 9.x
+            classmap-authoritative: true
+
+          - php: '8.2'
             coverage: true
 
     name: ${{ matrix.laravel && 'Laravel compatibility - ' || '' }}${{ matrix.classmap-authoritative && 'classmap-authoritative - ' || '' }}${{ matrix.coverage && 'Coverage - ' || '' }}PHP ${{ matrix.php }} - ${{ matrix.setup || 'stable' }} - ubuntu
@@ -150,13 +150,17 @@ jobs:
             ${{ matrix.php >= 8.1 && 'composer require --no-update phpunit/phpunit:^9.5.20 --no-interaction --dev;' || '' }}
             composer update --prefer-dist --no-progress --prefer-${{ matrix.setup || 'stable' }} ${{ matrix.classmap-authoritative && '--classmap-authoritative' || '' }}${{ matrix.php >= 8.2 && ' --ignore-platform-reqs' || '' }};
 
+      - name: Debug
+        run: |
+          php debug.php
+
       - name: Run test suite
         run: |
           if [[ "${{ matrix.laravel }}" != 'true' && "${{ matrix.coverage }}" = 'true' ]]; then
-            php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=coverage.xml --coverage-text;
+            php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=coverage.xml --coverage-text --testdox;
           fi;
           if [[ "${{ matrix.laravel }}" != 'true' && "${{ matrix.coverage }}" != 'true' ]]; then
-            php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit;
+            php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --testdox;
           fi;
           if [[ "${{ matrix.laravel }}" = 'true' ]]; then
             vendor/bin/multi-tester tests/Laravel/laravel-${{ matrix.reference }}.multi-tester.yml;
@@ -189,43 +193,43 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: 7.1.8
-          - php: 7.1.28
-          - php: 7.1
-          - php: 7.1
+          - php: '7.1.8'
+          - php: '7.1.28'
+          - php: '7.1'
+          - php: '7.1'
             setup: lowest
 
-          - php: 7.2.0
-          - php: 7.2.15
-          - php: 7.2
-          - php: 7.2
+          - php: '7.2.0'
+          - php: '7.2.15'
+          - php: '7.2'
+          - php: '7.2'
             setup: lowest
 
-          - php: 7.3.0
-          - php: 7.3.5
-          - php: 7.3
-          - php: 7.3
+          - php: '7.3.0'
+          - php: '7.3.5'
+          - php: '7.3'
+          - php: '7.3'
             setup: lowest
 
-          - php: 7.4
+          - php: '7.4'
             coverage: true
-          - php: 7.4
+          - php: '7.4'
             setup: lowest
 
-          - php: 8.0
-          - php: 8.0
+          - php: '8.0'
+          - php: '8.0'
             setup: lowest
 
-          - php: 8.1
-          - php: 8.1
+          - php: '8.1'
+          - php: '8.1'
             setup: lowest
 
-          - php: 8.2
-          - php: 8.2
+          - php: '8.2'
+          - php: '8.2'
             setup: lowest
 
-          - php: 8.3
-          - php: 8.3
+          - php: '8.3'
+          - php: '8.3'
             setup: lowest
 
     name: PHP ${{ matrix.php }} - ${{ matrix.setup || 'stable' }} - windows
@@ -263,9 +267,13 @@ jobs:
             ${{ matrix.php >= 8.1 && 'composer require --no-update phpunit/phpunit:^9.5.20 --no-interaction --dev;' || '' }}
             composer update --prefer-dist --no-progress --prefer-${{ matrix.setup || 'stable' }}${{ matrix.php >= 8.2 && ' --ignore-platform-reqs' || '' }};
 
+      - name: Debug
+        run: |
+          php debug.php
+
       - name: Run test suite
         run: |
-          php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit;
+          php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --testdox;
         env:
           PHP_VERSION: ${{ matrix.php }}
           REDIS_HOST: 127.0.0.1
