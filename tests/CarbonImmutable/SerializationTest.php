@@ -228,11 +228,7 @@ class SerializationTest extends AbstractTestCase
         /** @var Carbon $date */
         $date = (new ReflectionClass(Carbon::class))->newInstanceWithoutConstructor();
 
-        $date->__unserialize([
-            'date' => '2018-06-01 21:25:13.321654',
-            'timezone_type' => 3,
-            'timezone' => 'Europe/Vilnius',
-        ]);
+        $date->__construct('2018-06-01 21:25:13.321654', 'Europe/Vilnius');
 
         $this->assertSame('2018-06-01 21:25:13.321654 Europe/Vilnius', $date->format('Y-m-d H:i:s.u e'));
         $this->assertSame('en', $date->locale);
@@ -240,12 +236,8 @@ class SerializationTest extends AbstractTestCase
         /** @var Carbon $date */
         $date = (new ReflectionClass(Carbon::class))->newInstanceWithoutConstructor();
 
-        $date->__unserialize([
-            'date' => '2018-06-01 21:25:13.321654',
-            'timezone_type' => 3,
-            'timezone' => 'Europe/Vilnius',
-            'dumpLocale' => 'lt_LT',
-        ]);
+        $date->__construct('2018-06-01 21:25:13.321654', 'Europe/Vilnius');
+        $date->locale('lt_LT');
 
         $this->assertSame('2018-06-01 21:25:13.321654 Europe/Vilnius', $date->format('Y-m-d H:i:s.u e'));
         $this->assertSame('lt_LT', $date->locale);
