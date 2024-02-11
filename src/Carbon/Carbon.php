@@ -556,7 +556,7 @@ class Carbon extends DateTime implements JsonSerializable
         if (isset($locale)) {
             setlocale(LC_NUMERIC, $locale);
         }
-        static::setLastErrors(parent::getLastErrors());
+        static::setLastErrors((array)parent::getLastErrors());
     }
 
     /**
@@ -884,7 +884,7 @@ class Carbon extends DateTime implements JsonSerializable
     {
         // First attempt to create an instance, so that error messages are based on the unmodified format.
         $date = self::createFromFormatAndTimezone($format, $time, $tz);
-        $lastErrors = parent::getLastErrors();
+        $lastErrors = (array)parent::getLastErrors();
 
         if (($mock = static::getTestNow()) && ($date instanceof DateTime || $date instanceof DateTimeInterface)) {
             // Set timezone from mock if custom timezone was neither given directly nor as a part of format.
